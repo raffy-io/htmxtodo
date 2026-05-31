@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/raffy-io/htmxtodo"
 
 	"github.com/raffy-io/htmxtodo/internal/connection"
@@ -18,12 +17,6 @@ import (
 
 
 func main() {
-	// ENV
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
-	
 	// Database Connection
 
 	// Turso URLs look like: libsql://your-db-name-username.turso.io
