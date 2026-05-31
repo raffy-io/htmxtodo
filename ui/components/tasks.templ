@@ -1,0 +1,60 @@
+package components
+
+import (
+	"fmt"
+	"github.com/raffy-io/htmxtodo/internal/db"
+)
+
+templ Tasks(tasks []db.Task) {
+	@TasksList(tasks)
+	<div class="pl-2 relative" x-data="{ open: false }">
+		<dialog
+			x-show="open"
+			x-effect="open ? $el.showModal() : $el.close()"
+			@close="open = false"
+			class="rounded p-6 bg-white shadow-xl md:w-2/3 lg:w-1/2 mx-auto  w-dvw fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop:bg-gray-900/50 backdrop:backdrop-blur-xs"
+			x-transition.duration.250ms
+		>
+			<h2 class="font-semibold mb-4">Add Task</h2>
+			<form hx-post="/addtask" hx-target="#tasks" hx-swap="outerHTML" hx-on::after-request="this.reset()" class="flex flex-col mb-2 relative">
+				<!-- Toggling open to false triggers the x-effect, which calls $el.close() -->
+				<button @click="open = false" class="cursor-pointer  absolute -top-10 right-0.5 text-2xl font-black">
+					&times;
+				</button>
+				<input type="text" name="task" class="bg-stone-200 w-full outline-0 focus:border-b-2 focus:border-brand-acc mb-4"/>
+				<button type="submit" class="cursor-pointer py-0.5 px-2 bg-brand-acc text-sky-50 capitalize">add</button>
+			</form>
+		</dialog>
+		<button class="h-8 w-8 bg-brand-acc text-brand-dom rounded-full shadow-xs" @click="open = true">&#43</button>
+	</div>
+}
+
+templ TasksList(tasks []db.Task) {
+	<ul id="tasks" class="flex flex-col gap-2 mb-8">
+		for i, task := range tasks {
+			<li x-data="{ checked: false }" class="flex justify-between items-center bg-white py-2 px-4 shadow-sm rounded">
+				<div class="flex items-center gap-4">
+					<label
+						class={ "h-4 w-4 border-3 rounded-full flex items-center justify-center cursor-pointer", 
+                        templ.KV("border-brand-acc", i % 2 == 0), 
+                        templ.KV("border-brand-del", i % 2 != 0) }
+						@click="checked = !checked"
+					>
+						<span class="inline-block h-2 w-2 rounded-full bg-brand-sec" x-show="checked" x-cloak></span>
+					</label>
+					<input type="checkbox" class="hidden" x-model="checked"/>
+					<span class="capitalize font-semibold text-gray-800" :class="checked ? 'line-through text-brand-acc/50' : ''">
+						{ task.Name }
+					</span>
+				</div>
+				<div class="flex items-center gap-1" x-show="checked" x-cloak>
+					<form hx-delete={ templ.SafeURL(fmt.Sprintf("/deletetask/%d", task.ID)) } hx-target="#tasks" hx-swap="outerHTML">
+						<button type="submit" class="cursor-pointer capitalize text-brand-del text-sm font-semibold">
+							delete
+						</button>
+					</form>
+				</div>
+			</li>
+		}
+	</ul>
+}
