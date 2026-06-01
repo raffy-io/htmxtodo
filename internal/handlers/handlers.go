@@ -11,11 +11,16 @@ import (
 	"github.com/raffy-io/htmxtodo/ui/layout"
 )
 
-type TasksHandler struct {
+
+type Handler struct {
 	Queries *db.Queries
 }
 
-func (h *TasksHandler) GetTasks(w http.ResponseWriter, r *http.Request) {
+func NewHandler(queries *db.Queries) *Handler {
+	return &Handler{Queries: queries}
+}
+
+func (h *Handler) GetTasks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	data ,err := h.Queries.ListTasks(ctx)
 	if err != nil {
@@ -29,7 +34,7 @@ func (h *TasksHandler) GetTasks(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h *TasksHandler) AddTask(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) AddTask(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		err := r.ParseForm()
 		if err != nil{
@@ -56,7 +61,7 @@ func (h *TasksHandler) AddTask(w http.ResponseWriter, r *http.Request) {
 	
 }
 
-func (h *TasksHandler) DeleteTask(w http.ResponseWriter, r *http.Request){
+func (h *Handler) DeleteTask(w http.ResponseWriter, r *http.Request){
 	ctx := r.Context()
 
 	err := r.ParseForm()
