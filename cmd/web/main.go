@@ -9,7 +9,7 @@ import (
 
 	"github.com/raffy-io/htmxtodo"
 
-	"github.com/raffy-io/htmxtodo/internal/conf"
+	"github.com/raffy-io/htmxtodo/internal/config"
 	"github.com/raffy-io/htmxtodo/internal/connection"
 	"github.com/raffy-io/htmxtodo/internal/db"
 	"github.com/raffy-io/htmxtodo/internal/handlers"
@@ -20,7 +20,7 @@ import (
 func main() {
 	
 	// ENV
-	cfg, err := conf.Load()
+	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("Failed to initialize configuration: %v", err)
 	}
